@@ -1,2 +1,19 @@
 ---
-# tasks file for docker-compose
+- name: Create {{docker_compose_location}} before downloading docker-compose
+  file:
+    path: "{{docker_compose_location}}"
+    state: directory
+    mode: "{{docker_compose_location_mode}}"
+  become: yes
+
+- name: Download docker-compose
+  get_url:
+    url: "https://github.com/docker/compose/releases/download/{{docker_compose_version}}/docker-compose-Linux-x86_64"
+    dest: "{{docker_compose_location}}/{{docker_compose_filename}}"
+    mode: "{{docker_compose_file_mode}}"
+    force: yes
+  become: yes
+
+- name: Create /etc/systemd/system/dc@.service
+  template: src=systemd/dc@.service dest=/etc/systemd/system/dc@.service
+  become: yes

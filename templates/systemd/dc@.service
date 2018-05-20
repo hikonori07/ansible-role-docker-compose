@@ -1,0 +1,26 @@
+[Unit]
+Description=docker-compose %i service
+Requires=docker.service
+
+[Service]
+User={{ docker_compose_user }}
+Type=simple
+
+EnvironmentFile=-{{ docker_compose_environment_file_root }}/%i.env
+Environment=COMPOSE_FILE={{ docker_compose_compose_file_root }}/%i/docker-compose.yml
+
+ExecStartPre=-/opt/bin/docker-compose -f ${COMPOSE_FILE} kill
+ExecStartPre=-/opt/bin/docker-compose -f ${COMPOSE_FILE} rm -v -f
+ExecStartPre=-/opt/bin/docker-compose -f ${COMPOSE_FILE} down
+
+ExecStart=/opt/bin/docker-compose -f ${COMPOSE_FILE} up --force-recreate --abort-on-container-exit
+
+ExecStop=/opt/bin/docker-compose -f ${COMPOSE_FILE} stop
+ExecStopPost=-/opt/bin/docker-compose -f ${COMPOSE_FILE} rm -v -f
+ExecStopPost=-/opt/bin/docker-compose -f ${COMPOSE_FILE} down
+
+Restart=always
+RestartSec=180s
+
+[Install]
+WantedBy=multi-user.target
