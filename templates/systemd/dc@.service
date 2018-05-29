@@ -9,15 +9,15 @@ Type=simple
 EnvironmentFile=-{{ docker_compose_environment_file_root }}/%i.env
 Environment=COMPOSE_FILE={{ docker_compose_compose_file_root }}/%i/docker-compose.yml
 
-ExecStartPre=-/opt/bin/docker-compose -f ${COMPOSE_FILE} kill
-ExecStartPre=-/opt/bin/docker-compose -f ${COMPOSE_FILE} rm -v -f
-ExecStartPre=-/opt/bin/docker-compose -f ${COMPOSE_FILE} down
+ExecStartPre=-{{ docker_compose_location }}/docker-compose -f ${COMPOSE_FILE} kill
+ExecStartPre=-{{ docker_compose_location }}/docker-compose -f ${COMPOSE_FILE} rm -v -f
+ExecStartPre=-{{ docker_compose_location }}/docker-compose -f ${COMPOSE_FILE} down
 
-ExecStart=/opt/bin/docker-compose -f ${COMPOSE_FILE} up --force-recreate --abort-on-container-exit
+ExecStart={{ docker_compose_location }}/docker-compose -f ${COMPOSE_FILE} up --force-recreate --abort-on-container-exit
 
-ExecStop=/opt/bin/docker-compose -f ${COMPOSE_FILE} stop
-ExecStopPost=-/opt/bin/docker-compose -f ${COMPOSE_FILE} rm -v -f
-ExecStopPost=-/opt/bin/docker-compose -f ${COMPOSE_FILE} down
+ExecStop={{ docker_compose_location }}/docker-compose -f ${COMPOSE_FILE} stop
+ExecStopPost=-{{ docker_compose_location }}/docker-compose -f ${COMPOSE_FILE} rm -v -f
+ExecStopPost=-{{ docker_compose_location }}/docker-compose -f ${COMPOSE_FILE} down
 
 Restart=always
 RestartSec=180s
